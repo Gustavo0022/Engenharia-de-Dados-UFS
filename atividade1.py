@@ -3,11 +3,13 @@ import subprocess
 import platform
 import os
 
+# Colunas obrigatórias que o CSV deve conter
 COLUNAS_ESPERADAS = ["matricula", "nome_discente", "ano_ingresso", "periodo_ingresso",
                      "tipo_discente", "status_discente", "nivel_ensino", "nome_curso",
                      "modalidade_educacao", "nome_unidade", "nome_unidade_gestora"]
 
 
+# Classe que representa um discente com todos os seus atributos
 class Aluno:
     def __init__(self, matricula, nome_discente, ano_ingresso, periodo_ingresso,
                  tipo_discente, status_discente, nivel_ensino, nome_curso,
@@ -24,8 +26,10 @@ class Aluno:
         self.unidade = nome_unidade
         self.unidade_gestora = nome_unidade_gestora
 
+# Lista global que armazena os alunos carregados do CSV
 alunos = []
 
+# Limpa o terminal de acordo com o sistema operacional
 def clear():
     if platform.system() == "Windows":
         subprocess.run(["cls"], shell=True)
@@ -33,12 +37,14 @@ def clear():
         subprocess.run(["clear"])
 
 
+# Retorna todos os arquivos CSV encontrados na pasta do script
 def listar_csvs():
     pasta = os.path.dirname(os.path.abspath(__file__))
     csvs = [f for f in os.listdir(pasta) if f.lower().endswith(".csv")]
     return sorted(csvs), pasta
 
 
+# Verifica se o cabeçalho do CSV contém todas as colunas esperadas
 def validar_estrutura(cabecalho):
     colunas_arquivo = [col.strip().lower() for col in cabecalho]
 
@@ -56,6 +62,7 @@ def validar_estrutura(cabecalho):
     return True, None
 
 
+# Exibe os CSVs disponíveis e retorna o caminho do arquivo escolhido pelo usuário
 def selecionar_csv():
     csvs, pasta = listar_csvs()
 
@@ -81,6 +88,7 @@ def selecionar_csv():
     return os.path.join(pasta, csvs[int(escolha) - 1])
 
 
+# Lê o CSV selecionado, valida a estrutura e carrega os alunos na lista global
 def carregarCSV():
     clear()
     caminho = selecionar_csv()
@@ -106,6 +114,7 @@ def carregarCSV():
                 return
 
             alunos.clear()
+            # Cria um objeto Aluno para cada linha do CSV e adiciona na lista
             for linha in reader:
                 aluno = Aluno(
                     matricula=linha[0],
@@ -133,6 +142,7 @@ def carregarCSV():
         input("Pressione enter para voltar")
 
 
+# Exibe os dados de um aluno formatados no terminal
 def imprimirAluno(aluno):
     print("------------------------------------------------------")
     print("MATRÍCULA: " + aluno.matricula)
@@ -149,6 +159,7 @@ def imprimirAluno(aluno):
     print("------------------------------------------------------");
     input("Pressione enter para voltar")
 
+# Busca um aluno pela matrícula e exibe seus dados
 def pesquisarAluno():
     clear()
     matricula = input("digite a matrícula do discente:")
@@ -159,6 +170,7 @@ def pesquisarAluno():
     print("Discente não enontrado");
     input("Pressione enter para voltar");
 
+# Exporta todos os alunos carregados para um arquivo de texto
 def exportarTexto():
     clear()
     if not alunos:
@@ -187,7 +199,7 @@ def exportarTexto():
     input("Pressione enter para voltar")
 
 
-#print(alunos[2])
+# Menu principal do programa
 def main():
     while True:
         clear()
